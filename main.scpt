@@ -1,5 +1,5 @@
 (*
-Studio Attic v0.1.4
+Studio Attic v0.1.5
 Cassette-recording tool
 ****************************************************************
 COPYRIGHT LESTERRRY, 2021
@@ -74,8 +74,8 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 		set volume output volume 85
 		set a to 0
 		play playlist plist
-		pause
 		if b is "Advanced" then
+			pause
 			display dialog "Select a track to begin with" default answer "1" with title "Studio Attic" buttons {"Launch from side B", "Launch"} default button "Launch"
 			if the button returned of the result is "Launch" then
 				try
@@ -94,7 +94,7 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 		end if
 	end if
 	set i to a - 1
-	repeat songscount_a + songscount_b times
+	repeat (songscount_a + songscount_b) - 1 times
 		set i to i + 1
 		repeat
 			if player state is paused then
