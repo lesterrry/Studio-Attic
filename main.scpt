@@ -44,10 +44,10 @@ tell application "Music"
 		quit me
 	end if
 	repeat with j in tracks of playlist plist
-		set i to i + 1
 		set b to a + gaplength + (duration of j)
 		if b < tapelength / 2 then
 			set a to b
+			set i to i + 1
 		else
 			set s to (round (a / 60)) as string
 			set t to (round (plistlength - a) / 60) as string
@@ -119,3 +119,4 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 		end repeat
 	end repeat
 end tell
+§
