@@ -1,5 +1,5 @@
 (*
-Studio Attic v0.1.3
+Studio Attic v0.1.4
 Cassette-recording tool
 ****************************************************************
 COPYRIGHT LESTERRRY, 2021
@@ -40,7 +40,7 @@ tell application "Music"
 	set plistcount to number of tracks of playlist plist
 	set plistlength to (round (duration of playlist plist as real)) + (plistcount * gaplength)
 	if plistlength is greater than tapelength then
-		display alert "Sorry, this playlist is too long: " & (round ((plistlength / 60) as string) & " min vs " & (round ((tapelength / 60) as string) & " min"))
+		display alert "Sorry, this playlist is too long: " & ((round (plistlength / 60)) as string) & " min vs " & ((round (tapelength / 60)) as string) & " min"
 		quit me
 	end if
 	repeat with j in tracks of playlist plist
@@ -55,7 +55,7 @@ tell application "Music"
 			set songscount_a to i
 			set songscount_b to plistcount - i
 			display dialog ("Time including gaps: " & s & " min (" & (songscount_a as string) & " songs) will be recorded on side A, leaving " & t & " min (" & (songscount_b as string) & " songs) for B.
-" & o & " min in total.") buttons {"Next", "Abort"} with title "Studio Attic"
+" & o & " min in total.") buttons {"Abort", "Next"} with title "Studio Attic" default button "Next"
 			if the button returned of the result is "Abort" then
 				quit me
 			end if
@@ -63,17 +63,37 @@ tell application "Music"
 		end if
 	end repeat
 	display dialog "You're all set to record '" & plist & "' on your " & (round tapelength / 60) & " min cassette. Don't forget to quit all disturbing apps to avoid unwanted sounds.
-Shall we begin?" buttons {"Abort", "Launch"} default button "Launch" with title "Studio Attic"
+Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch" with title "Studio Attic"
 	if the button returned of the result is "Abort" then
 		quit me
+	else
+		set b to button returned of the result
+		set shuffle enabled to false
+		set song repeat to off
+		set sound volume to 80
+		set volume output volume 85
+		set a to 0
+		play playlist plist
+		pause
+		if b is "Advanced" then
+			display dialog "Select a track to begin with" default answer "1" with title "Studio Attic" buttons {"Launch from side B", "Launch"} default button "Launch"
+			if the button returned of the result is "Launch" then
+				try
+					set a to the (text returned of the result as number)
+				on error
+					display alert "Sorry, provided track is NaN"
+					quit me
+				end try
+			else
+				set a to songscount_a
+			end if
+			repeat a - 1 times
+				next track
+			end repeat
+			play
+		end if
 	end if
-	set shuffle enabled to false
-	set song repeat to off
-	set sound volume to 80
-	set volume output volume 85
-	play playlist plist
-	
-	set i to 0
+	set i to a - 1
 	repeat songscount_a + songscount_b times
 		set i to i + 1
 		repeat
@@ -82,13 +102,14 @@ Shall we begin?" buttons {"Abort", "Launch"} default button "Launch" with title 
 			end if
 			if player position is greater than (duration of the current track) - 2 then
 				pause
-				delay gaplength
-				if i is equal to songscount_a then
+				next track
+				if i is equal to songscount_a - 1 then
 					pause
 					display dialog "Side A recording completed. Wait for the tape to end." buttons "Next" with title "Studio Attic"
 					play
 				else
 					display notification (i as string) & " out of " & songscount_a + songscount_b & " recorded" with title plist & " – Studio Attic"
+					delay gaplength
 					play
 				end if
 				delay 4
