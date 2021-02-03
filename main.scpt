@@ -1,5 +1,5 @@
 (*
-Studio Attic v0.1.2
+Studio Attic v0.1.3
 Cassette-recording tool
 ****************************************************************
 COPYRIGHT LESTERRRY, 2021
@@ -69,12 +69,11 @@ Shall we begin?" buttons {"Abort", "Launch"} default button "Launch" with title 
 	end if
 	set shuffle enabled to false
 	set song repeat to off
-	set sound volume to 75
-	set volume output volume 75
+	set sound volume to 80
+	set volume output volume 85
 	play playlist plist
 	
 	set i to 0
-	set songscount_a to 2
 	repeat songscount_a + songscount_b times
 		set i to i + 1
 		repeat
