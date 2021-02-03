@@ -1,5 +1,5 @@
 (*
-Studio Attic v0.1.5
+Studio Attic v0.1.6
 Cassette-recording tool
 ****************************************************************
 COPYRIGHT LESTERRRY, 2021
@@ -26,7 +26,7 @@ else
 end if
 
 display dialog "Now select a Music playlist to record on your " & (round tapelength / 60) & " min cassette" default answer "" with title "Studio Attic" buttons {"Next"}
-set plist to the text returned of the result
+set plist to the (text returned of the result) as string
 try
 	tell application "Music" to reveal playlist plist
 on error
@@ -79,7 +79,7 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 			display dialog "Select a track to begin with" default answer "1" with title "Studio Attic" buttons {"Launch from side B", "Launch"} default button "Launch"
 			if the button returned of the result is "Launch" then
 				try
-					set a to the (text returned of the result as number)
+					set a to the (text returned of the result as number) - 1
 				on error
 					display alert "Sorry, provided track is NaN"
 					quit me
@@ -87,13 +87,13 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 			else
 				set a to songscount_a
 			end if
-			repeat a - 1 times
+			repeat a times
 				next track
 			end repeat
 			play
 		end if
 	end if
-	set i to a - 1
+	set i to a
 	repeat (songscount_a + songscount_b) - 1 times
 		set i to i + 1
 		repeat
@@ -103,7 +103,7 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 			if player position is greater than (duration of the current track) - 2 then
 				pause
 				next track
-				if i is equal to songscount_a - 1 then
+				if i is equal to songscount_a then
 					pause
 					display dialog "Side A recording completed. Wait for the tape to end." buttons "Next" with title "Studio Attic"
 					play
