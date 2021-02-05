@@ -1,5 +1,5 @@
 (*
-Studio Attic v0.1.6
+Studio Attic v0.1.7
 Cassette-recording tool
 ****************************************************************
 COPYRIGHT LESTERRRY, 2021
@@ -94,7 +94,8 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 		end if
 	end if
 	set i to a
-	repeat (songscount_a + songscount_b) - 1 times
+	set recb to false
+	repeat while i is not equal to (songscount_a + songscount_b) - 1
 		set i to i + 1
 		repeat
 			if player state is paused then
@@ -103,7 +104,8 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 			if player position is greater than (duration of the current track) - 2 then
 				pause
 				next track
-				if i is equal to songscount_a then
+				if i is equal to songscount_a and recb is false then
+					set recb to true
 					pause
 					display dialog "Side A recording completed. Wait for the tape to end." buttons "Next" with title "Studio Attic"
 					play
@@ -119,4 +121,4 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 		end repeat
 	end repeat
 end tell
-§
+display dialog "Side B recording completed. Return soon to the Attic!" buttons "Exit" with title "Studio Attic"
