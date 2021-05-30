@@ -1,5 +1,5 @@
 (*
-Studio Attic v0.1.7
+Studio Attic v0.1.8
 Cassette-recording tool
 ****************************************************************
 COPYRIGHT LESTERRRY, 2021
@@ -35,30 +35,41 @@ on error
 end try
 
 tell application "Music"
-	set a to 0
-	set i to 0
 	set plistcount to number of tracks of playlist plist
 	set plistlength to (round (duration of playlist plist as real)) + (plistcount * gaplength)
-	if plistlength is greater than tapelength then
-		display alert "Sorry, this playlist is too long: " & ((round (plistlength / 60)) as string) & " min vs " & ((round (tapelength / 60)) as string) & " min"
+	set plistlengthsec to round (plistlength / 60)
+	set tapelengthsec to round (tapelength / 60)
+	if plistlengthsec is greater than tapelengthsec then
+		display alert "Sorry, this playlist is too long: " & (plistlengthsec as string) & " min vs " & (tapelengthsec as string) & " min"
 		quit me
 	end if
-	repeat with j in tracks of playlist plist
-		set b to a + gaplength + (duration of j)
-		if b < tapelength / 2 then
-			set a to b
-			set i to i + 1
-		else
-			set s to (round (a / 60)) as string
-			set t to (round (plistlength - a) / 60) as string
-			set o to (round plistlength / 60) as string
-			set songscount_a to i
-			set songscount_b to plistcount - i
-			display dialog ("Time including gaps: " & s & " min (" & (songscount_a as string) & " songs) will be recorded on side A, leaving " & t & " min (" & (songscount_b as string) & " songs) for B.
-" & o & " min in total.") buttons {"Abort", "Next"} with title "Studio Attic" default button "Next"
-			if the button returned of the result is "Abort" then
+	repeat while true
+		set a to 0
+		set i to 0
+		repeat with j in tracks of playlist plist
+			try
+				set b to a + gaplength + (duration of j)
+			on error
+				display alert "Sorry, problem with '" & name of j & "'"
 				quit me
+			end try
+			if b < tapelength / 2 then
+				set a to b
+				set i to i + 1
+			else
+				set s to (round (a / 60)) as string
+				set t to (round (plistlength - a) / 60) as string
+				set o to (round plistlength / 60) as string
+				set songscount_a to i
+				set songscount_b to plistcount - i
+				exit repeat
 			end if
+		end repeat
+		tell me to display dialog ("Time including gaps: " & s & " min (" & (songscount_a as string) & " songs) will be recorded on side A, leaving " & t & " min (" & (songscount_b as string) & " songs) for B.
+" & o & " min in total.") buttons {"Update", "Abort", "Next"} with title "Studio Attic" default button "Next"
+		if the button returned of the result is "Abort" then
+			quit me
+		else if the button returned of the result is "Next" then
 			exit repeat
 		end if
 	end repeat
@@ -70,8 +81,8 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 		set b to button returned of the result
 		set shuffle enabled to false
 		set song repeat to off
-		set sound volume to 80
-		set volume output volume 85
+		set sound volume to 85
+		set volume output volume 90
 		set a to 0
 		play playlist plist
 		if b is "Advanced" then
@@ -107,7 +118,7 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 				if i is equal to songscount_a and recb is false then
 					set recb to true
 					pause
-					display dialog "Side A recording completed. Wait for the tape to end." buttons "Next" with title "Studio Attic"
+					tell me to display dialog "Side A recording completed. Wait for the tape to end." buttons "Next" with title "Studio Attic"
 					play
 				else
 					display notification (i as string) & " out of " & songscount_a + songscount_b & " recorded" with title plist & " – Studio Attic"
