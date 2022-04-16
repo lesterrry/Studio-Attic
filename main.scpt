@@ -1,5 +1,5 @@
 (*
-Studio Attic v0.1.8
+Studio Attic v0.1.9
 Cassette-recording tool
 ****************************************************************
 COPYRIGHT LESTERRRY, 2021
@@ -37,7 +37,7 @@ end try
 tell application "Music"
 	set plistcount to number of tracks of playlist plist
 	set plistlength to (round (duration of playlist plist as real)) + (plistcount * gaplength)
-	set plistlengthsec to round (plistlength / 60)
+	set plistlengthsec to (round (plistlength / 60) - 1)
 	set tapelengthsec to round (tapelength / 60)
 	if plistlengthsec is greater than tapelengthsec then
 		display alert "Sorry, this playlist is too long: " & (plistlengthsec as string) & " min vs " & (tapelengthsec as string) & " min"
