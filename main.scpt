@@ -1,5 +1,5 @@
 (*
-Studio Attic v0.1.9
+Studio Attic v0.1.10
 Cassette-recording tool
 ****************************************************************
 COPYRIGHT LESTERRRY, 2021
@@ -114,15 +114,16 @@ Shall we begin?" buttons {"Abort", "Advanced", "Launch"} default button "Launch"
 			end if
 			if player position is greater than (duration of the current track) - 2 then
 				pause
-				next track
 				if i is equal to songscount_a and recb is false then
 					set recb to true
 					pause
 					tell me to display dialog "Side A recording completed. Wait for the tape to end." buttons "Next" with title "Studio Attic"
+					next track
 					play
 				else
 					display notification (i as string) & " out of " & songscount_a + songscount_b & " recorded" with title plist & " – Studio Attic"
 					delay gaplength
+					next track
 					play
 				end if
 				delay 4
